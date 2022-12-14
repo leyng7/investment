@@ -1,5 +1,7 @@
 <template>
-  <HelloWorld />
+  <v-container>
+      <HelloWorld/>
+  </v-container>
 </template>
 
 <script>
@@ -14,7 +16,13 @@ export default {
 </script>
 
 <style>
-  #app {
-    touch-action: pan-x pan-y;
-  }
+#app {
+  touch-action: pan-x pan-y;
+}
+
+.v-field__input {
+  text-align: right;
+  margin-right: 5px;
+}
+
 </style>
