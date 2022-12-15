@@ -1,5 +1,8 @@
 <template>
-  <v-container style="max-width: 500px;">
+  <v-container
+      fluid
+      style="max-width: 500px;"
+  >
       <HelloWorld/>
   </v-container>
 </template>

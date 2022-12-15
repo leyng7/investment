@@ -65,6 +65,7 @@
     <v-btn
         variant="tonal"
         block
+        @click="calculation()"
     >계산하기
     </v-btn>
   </v-row>
@@ -75,21 +76,22 @@
       <tbody>
         <tr>
           <td>대출원금</td>
-          <td class="text-right">100,000,000 원</td>
+          <td class="text-right">{{ calMoney }} 원</td>
         </tr>
         <tr>
           <td>대출이자</td>
-          <td class="text-right text-red">5,291,335 원</td>
+          <td class="text-right text-red">{{ calInterest }} 원</td>
         </tr>
         <tr>
           <td>상환금액</td>
-          <td class="text-right">105,291,335 원</td>
+          <td class="text-right">{{ calSum }} 원</td>
         </tr>
       </tbody>
     </v-table>
   </v-row>
   <v-row class="mb-4">
     <v-table
+        class="w-100"
         density="compact"
         fixed-header
     >
@@ -104,14 +106,14 @@
       </thead>
       <tbody>
         <tr
-            v-for="(item, index) in desserts"
+            v-for="(item, index) in items"
             :key="item.name"
         >
           <td class="text-center">{{ index + 1 }}</td>
-          <td class="text-center">100,000,000</td>
-          <td class="text-center">100,000,000</td>
-          <td class="text-center">100,000,000</td>
-          <td class="text-center">100,000,000</td>
+          <td class="text-center">{{ item.repayment }}</td>
+          <td class="text-center">{{ item.original }}</td>
+          <td class="text-center">{{ item.interest }}</td>
+          <td class="text-center">{{ item.total }}</td>
         </tr>
       </tbody>
     </v-table>
@@ -127,48 +129,15 @@ export default {
       period: 0,
       interest: 0,
       exclusive: 0,
-      desserts: [
-        {
-          name: 'Frozen Yogurt',
-          calories: 159,
-        },
-        {
-          name: 'Ice cream sandwich',
-          calories: 237,
-        },
-        {
-          name: 'Eclair',
-          calories: 262,
-        },
-        {
-          name: 'Cupcake',
-          calories: 305,
-        },
-        {
-          name: 'Gingerbread',
-          calories: 356,
-        },
-        {
-          name: 'Jelly bean',
-          calories: 375,
-        },
-        {
-          name: 'Lollipop',
-          calories: 392,
-        },
-        {
-          name: 'Honeycomb',
-          calories: 408,
-        },
-        {
-          name: 'Donut',
-          calories: 452,
-        },
-        {
-          name: 'KitKat',
-          calories: 518,
-        },
-      ],
+      calMoney: null,
+      calInterest: null,
+      items: [],
+    }
+  },
+  computed: {
+    calSum() {
+      const result = this.comma(this.unComma(this.calMoney) + this.unComma(this.calInterest));
+      return result === 'NaN' ? 0 : result;
     }
   },
   methods: {
@@ -191,12 +160,47 @@ export default {
     unComma(str) {
       str = String(str);
       return parseInt(str.replace(/[^\d]+/g, ''));
+    },
+    calculation() {
+      if (this.exclusive === 2) {
+        this.maturity();
+      }
+    },
+    maturity() {
+      const obj = this;
+      obj.calMoney = obj.money;
+      obj.calInterest = obj.comma(obj.unComma(obj.money) * obj.period * (obj.interest / 12 / 100));
+
+      const items = [];
+
+      let totalValue = obj.unComma(obj.calMoney) + obj.unComma(obj.calInterest);
+      const monthInterest = (obj.unComma(obj.calInterest) / obj.period).toFixed(0);
+
+      for (let i = 0; i < obj.period - 1; i++) {
+
+        totalValue = totalValue - monthInterest;
+        items.push({
+          repayment: obj.comma(monthInterest),
+          original: 0,
+          interest: obj.comma(monthInterest),
+          total: obj.comma(totalValue)
+        });
+      }
+
+      items.push({
+        repayment: obj.comma(totalValue),
+        original: obj.comma(obj.calMoney),
+        interest: obj.comma(totalValue - obj.unComma(obj.calMoney)),
+        total: 0
+      });
+
+      obj.items = items;
     }
   },
   filters: {
     inputNumberFormat(val) {
       return String(val).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
+    },
   }
 }
 </script>
