@@ -1,4 +1,4 @@
-# vue-investment
+# investment
 
 ## Project setup
 ```

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container style="max-width: 500px;">
       <HelloWorld/>
   </v-container>
 </template>
@@ -16,6 +16,7 @@ export default {
 </script>
 
 <style>
+
 #app {
   touch-action: pan-x pan-y;
 }
@@ -24,5 +25,4 @@ export default {
   text-align: right;
   margin-right: 5px;
 }
-
 </style>
